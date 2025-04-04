@@ -36,6 +36,13 @@ suspend fun getUserInfo(username: String) = supervisorScope {
     return@supervisorScope Pair(gitHubUser, userRepos)
 }
 
+fun printUser(user: GitHubUser) {
+    println(user)
+    for (repo in user.repoList) {
+        println(repo)
+    }
+}
+
 fun main(): Unit = runBlocking {
     val users: MutableList<GitHubUser> = mutableListOf()
     val allRepos: MutableList<GitHubRepo> = mutableListOf()
@@ -58,15 +65,17 @@ fun main(): Unit = runBlocking {
             "1" -> {
                 print("Enter GitHub username: ")
                 val username = readln()
+                val localUser = users.find { it.login.equals(username, ignoreCase = true) }
+                if (localUser != null) {
+                    printUser(localUser)
+                    continue
+                }
                 val userInfo = getUserInfo(username) ?: continue
                 val (gitHubUser, userRepos) = userInfo
                 gitHubUser.repoList = userRepos
                 allRepos.addAll(userRepos)
                 users.add(gitHubUser)
-                println(gitHubUser)
-                for (repo in userRepos) {
-                    println(repo)
-                }
+                printUser(gitHubUser)
             }
             "2" -> {
                 if (users.isEmpty()) println("No users saved ⚠")
@@ -86,9 +95,9 @@ fun main(): Unit = runBlocking {
             }
             "4" -> {
                 print("Enter repo name to search: ")
-                val query = readln().lowercase()
+                val query = readln()
                 println("Searching \uD83D\uDD0D")
-                val matches = allRepos.filter { it.name.lowercase().contains(query) }
+                val matches = allRepos.filter { it.name.contains(query, ignoreCase = true) }
                 if (matches.isEmpty()) println("No repositories found ⚠")
                 matches.forEach {
                     println(it)

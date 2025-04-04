@@ -14,12 +14,12 @@ https://docs.google.com/document/d/1rUNAUFWEsChPJ0d-utFOwQBygltzdY9Hyc6yT_TY57Q/
    cd github-fetch
    ```
 
-3. Build the project:
+2. Build the project:
    ```bash
    ./gradlew build
    ```
    
-5. Run the application:
+3. Run the application:
    ```bash
    ./gradlew run
    ```
